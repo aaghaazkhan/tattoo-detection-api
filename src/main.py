@@ -2,11 +2,8 @@
 # Imports
 # =========================================
 import os
-import shutil
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
-from typing import List, Optional
 from src.inference import run_inference # our custom function for tattoo detection
 
 # =========================================
@@ -29,6 +26,7 @@ def index():
 def predict(image: UploadFile = File(..., description="Upload a tattoo image")):
 
     input_dir = "src/inputs"
+    os.makedirs(input_dir, exist_ok=True)
     image_path = os.path.join(input_dir, image.filename)
 
     with open(image_path, 'wb') as f:

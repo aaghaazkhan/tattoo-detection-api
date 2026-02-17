@@ -1,3 +1,5 @@
 venv
 __pycache__
-tattoo_yolov8s.pt
+model
+inputs
+outputs
