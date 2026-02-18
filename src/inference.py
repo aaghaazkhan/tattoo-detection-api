@@ -33,4 +33,12 @@ def run_inference(image_path):
     save_dir = Path(result[0].save_dir)
     output_image_path = save_dir / Path(image_path).name
 
-    return output_image_path
+    r = result[0]
+
+    status = "True"
+    if r.boxes is None:
+        status = "False"
+
+    confidence_score = float(r.boxes.conf[0])
+
+    return output_image_path, status, confidence_score

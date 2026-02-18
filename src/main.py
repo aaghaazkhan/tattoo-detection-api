@@ -5,6 +5,7 @@ import os
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from src.inference import run_inference # our custom function for tattoo detection
+OUTPUT_DIR = r"C:\Users\Aaghaaz Khan\Personal\NoteActive\AI_Training\runs\detect\src\outputs\predict"
 
 # =========================================
 # App Initialization
@@ -34,10 +35,23 @@ def predict(image: UploadFile = File(..., description="Upload a tattoo image")):
 
     image.file.close()
     
-    output_image_path = run_inference(image_path)
+    output_image_path, status, confidence_score = run_inference(image_path)
+    filename = os.path.basename(output_image_path)
 
+    return {
+        "tattoo_status": status,
+        "confidence_score": confidence_score,
+        "output_path": f"http://127.0.0.1:8000/output_file/{filename}"
+    }
+
+#--------------------------------------------------------------
+
+@app.get("/output_file/{filename}")
+
+def output_file(filename: str):
+
+    file_path = os.path.join(OUTPUT_DIR, filename)
     return FileResponse(
-        output_image_path,
-        media_type='image/jpeg',
-        filename='prediction.jpeg'
+        file_path,
+        media_type="image/jpeg"
     )
